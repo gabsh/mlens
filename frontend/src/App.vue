@@ -28,6 +28,8 @@
       </div>
     </div>
 
+    <WelcomeModal />
+
     <div class="panels">
       <PredictionView v-if="view === 'prediction'" :models="models" />
       <ResultsView    v-else-if="view === 'results'" />
@@ -43,6 +45,7 @@ import { getHealth, getMlflowHealth } from './api.js'
 import PredictionView from './views/Prediction.vue'
 import ResultsView    from './views/Results.vue'
 import MLflowView     from './views/MLflow.vue'
+import WelcomeModal   from './views/WelcomeModal.vue'
 
 const view = ref('prediction')
 const models = ref([])
