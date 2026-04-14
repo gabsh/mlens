@@ -2,7 +2,7 @@ services:
   fastapi:
     build:
       context: .
-      dockerfile: docker/fastapi/Dockerfile
+      dockerfile: app/Dockerfile
     environment:
       - MODEL_DIR=/app/models
       - DATA_DIR=/app/data
