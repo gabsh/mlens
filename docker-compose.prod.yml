@@ -33,8 +33,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/mlens.conf:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
     depends_on:
       - fastapi
     restart: unless-stopped
