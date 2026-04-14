@@ -14,7 +14,7 @@ build/
 # Data & models (large files — upload manually)
 data/raw/
 data/processed/
-models/
+/models/
 mlruns/
 
 # Node
