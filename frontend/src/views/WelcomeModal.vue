@@ -1,9 +1,14 @@
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="overlay" @keydown.enter="close" tabindex="0" ref="overlayEl">
+    <div v-if="visible" class="overlay" @keydown.enter="close" tabindex="-1" ref="overlayRef">
       <div class="modal">
+        <div class="modal-titlebar">
+          <span>mlens@imdb:~$ ./welcome.sh</span>
+          <button class="close-btn" @click="close">✕</button>
+        </div>
 
-        <pre class="logo">
+        <div class="modal-body">
+          <pre class="ascii">
 <span style="color:#f5e6c8">███╗   ███╗██╗     ███████╗███╗   ██╗███████╗</span>
 <span style="color:#dfc49a">████╗ ████║██║     ██╔════╝████╗  ██║██╔════╝</span>
 <span style="color:#c49a6c">██╔████╔██║██║     █████╗  ██╔██╗ ██║███████╗</span>
@@ -11,71 +16,54 @@
 <span style="color:#7d5235">██║ ╚═╝ ██║███████╗███████╗██║ ╚████║███████║</span>
 <span style="color:#5c3a22">╚═╝     ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝</span></pre>
 
-        <p class="subtitle">mlens@imdb:~$ <span class="cmd">./welcome.sh</span></p>
+          <div class="section">
+            <div class="section-title">// about</div>
+            <p><span class="hl">mlens</span> is a binary sentiment classification benchmark trained on the <span class="hl">Stanford IMDB dataset</span> (50k reviews). It benchmarks every combination of embedding × classifier, tracks experiments with MLflow, and serves predictions + LIME explanations via a FastAPI backend.</p>
+          </div>
 
-        <div class="section">
-          <p class="label">about</p>
-          <p>
-            <strong>mlens</strong> is a binary sentiment classification benchmark trained on the
-            Stanford IMDB dataset (50k reviews). It benchmarks every combination of
-            embedding × classifier, tracks experiments with MLflow, and serves
-            predictions + LIME explanations via a FastAPI backend.
-          </p>
-        </div>
+          <div class="section">
+            <div class="section-title">// embeddings</div>
+            <div class="tags">
+              <span class="tag">TF-IDF</span>
+              <span class="tag">Bag of Words</span>
+              <span class="tag coming">GloVe <em>coming soon</em></span>
+              <span class="tag coming">BERT <em>coming soon</em></span>
+            </div>
+          </div>
 
-        <div class="section">
-          <p class="label">embeddings</p>
-          <div class="tags">
-            <span class="tag">TF-IDF</span>
-            <span class="tag">Bag of Words</span>
-            <span class="tag coming">GloVe <em>coming soon</em></span>
-            <span class="tag coming">BERT <em>coming soon</em></span>
+          <div class="section">
+            <div class="section-title">// classifiers</div>
+            <div class="tags">
+              <span class="tag">Logistic Regression</span>
+              <span class="tag">SVM</span>
+              <span class="tag">Random Forest</span>
+              <span class="tag">LightGBM</span>
+              <span class="tag">XGBoost</span>
+              <span class="tag">Naive Bayes</span>
+              <span class="tag coming">MLP <em>coming soon</em></span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">// stack</div>
+            <div class="stack-grid">
+              <div class="stack-item"><span class="stack-key">embeddings</span><span class="stack-val">TF-IDF · Bag of Words</span></div>
+              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">scikit-learn · LightGBM · XGBoost</span></div>
+              <div class="stack-item"><span class="stack-key">tracking  </span><span class="stack-val">MLflow</span></div>
+              <div class="stack-item"><span class="stack-key">explainability</span><span class="stack-val">LIME</span></div>
+              <div class="stack-item"><span class="stack-key">backend   </span><span class="stack-val">FastAPI (Python 3.11)</span></div>
+              <div class="stack-item"><span class="stack-key">frontend  </span><span class="stack-val">Vue 3 + Vite · nginx</span></div>
+              <div class="stack-item"><span class="stack-key">infra     </span><span class="stack-val">Docker</span></div>
+              <div class="stack-item"><span class="stack-key">github    </span><span class="stack-val"><a class="gh-link" href="https://github.com/gabsh/mlens" target="_blank" rel="noopener">github.com/gabsh/mlens</a></span></div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <button class="enter-btn" @click="close">
+              [ Press Enter to continue ]
+            </button>
           </div>
         </div>
-
-        <div class="section">
-          <p class="label">classifiers</p>
-          <div class="tags">
-            <span class="tag">Logistic Regression</span>
-            <span class="tag">SVM</span>
-            <span class="tag">Random Forest</span>
-            <span class="tag">LightGBM</span>
-            <span class="tag">XGBoost</span>
-            <span class="tag">Naive Bayes</span>
-            <span class="tag">MLP</span>
-          </div>
-        </div>
-
-        <div class="section">
-          <p class="label">stack</p>
-          <div class="tags">
-            <span class="tag">Python 3.11</span>
-            <span class="tag">scikit-learn</span>
-            <span class="tag">FastAPI</span>
-            <span class="tag">MLflow</span>
-            <span class="tag">LIME</span>
-            <span class="tag">Vue 3</span>
-            <span class="tag">Docker</span>
-          </div>
-        </div>
-
-        <div class="section">
-          <p class="label">source</p>
-          <p>
-            <a href="https://github.com/gabsh/mlens" target="_blank" class="link">
-              github.com/gabsh/mlens
-            </a>
-          </p>
-        </div>
-
-        <div class="footer">
-          <label class="dont-show">
-            <input type="checkbox" v-model="dontShow" />
-            don't show again
-          </label>
-          <button class="enter-btn" @click="close">press Enter to continue</button>
-        </div>
-
       </div>
     </div>
   </Teleport>
@@ -85,18 +73,14 @@
 import { ref, onMounted } from 'vue'
 
 const visible = ref(false)
-const dontShow = ref(false)
-const overlayEl = ref(null)
+const overlayRef = ref(null)
 
 onMounted(() => {
-  if (!localStorage.getItem('mlens_welcome_dismissed')) {
-    visible.value = true
-    setTimeout(() => overlayEl.value?.focus(), 50)
-  }
+  visible.value = true
+  setTimeout(() => overlayRef.value?.focus(), 50)
 })
 
 function close() {
-  if (dontShow.value) localStorage.setItem('mlens_welcome_dismissed', '1')
   visible.value = false
 }
 </script>
@@ -109,95 +93,149 @@ function close() {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 100;
   outline: none;
 }
 
 .modal {
-  width: 680px;
+  width: 700px;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--primary-dim);
   background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px 32px;
+  font-family: var(--font);
+}
+
+.modal-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: #252525;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--primary-dim);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font);
+  padding: 0;
+}
+.close-btn:hover { color: var(--primary); }
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
   scrollbar-width: none;
 }
+.modal-body::-webkit-scrollbar { display: none; }
 
-.logo {
-  font-family: var(--font);
-  font-size: 5.5px;
+.ascii {
+  font-size: 9px;
   line-height: 1.2;
   white-space: pre;
-  text-align: center;
 }
 
-.subtitle {
-  font-size: 13px;
-  color: var(--primary-dim);
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.cmd { color: var(--primary); }
 
-.section { display: flex; flex-direction: column; gap: 8px; }
-
-.label {
+.section-title {
+  color: var(--primary);
+  opacity: 0.65;
   font-size: 11px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
-p { font-size: 13px; color: var(--primary-dim); line-height: 1.7; }
+p {
+  color: var(--primary);
+  opacity: 0.9;
+  line-height: 1.7;
+  font-size: 13px;
+}
 
-.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.hl { color: var(--primary); opacity: 1; font-weight: bold; }
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .tag {
-  font-size: 12px;
-  color: var(--primary-dim);
-  border: 1px solid var(--border);
+  border: 1px solid var(--primary-dim);
+  color: var(--primary);
   padding: 2px 10px;
-  border-radius: 2px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
 }
 
 .tag.coming {
-  opacity: 0.45;
+  opacity: 0.4;
   border-style: dashed;
 }
 .tag.coming em { font-style: normal; font-size: 10px; margin-left: 4px; }
 
-.link { color: var(--accent); text-decoration: none; }
-.link:hover { text-decoration: underline; }
+.stack-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 24px;
+}
+
+.stack-item {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.stack-key {
+  color: var(--primary);
+  opacity: 0.6;
+  white-space: pre;
+  min-width: 80px;
+}
+
+.stack-val { color: var(--primary); opacity: 1; }
+
+.gh-link {
+  color: var(--primary);
+  opacity: 0.85;
+  text-decoration: none;
+  border-bottom: 1px solid var(--primary-dim);
+}
+.gh-link:hover { opacity: 1; }
 
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
+  margin-top: 4px;
 }
 
-.dont-show {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #444;
-  cursor: pointer;
-}
-.dont-show input { accent-color: var(--accent); cursor: pointer; }
 
 .enter-btn {
   background: none;
-  border: 1px solid var(--border);
-  color: var(--primary-dim);
+  border: 1px solid var(--primary-dim);
+  color: var(--primary);
   font-family: var(--font);
   font-size: 13px;
-  padding: 6px 18px;
+  padding: 6px 16px;
   cursor: pointer;
   transition: all 0.1s;
 }
-.enter-btn:hover { border-color: var(--accent); color: var(--primary); }
+.enter-btn:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
 </style>
