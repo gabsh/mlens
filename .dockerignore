@@ -1,0 +1,22 @@
+# Data & models — montés en volume, pas copiés dans l'image
+data/
+models/
+mlruns/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Env
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

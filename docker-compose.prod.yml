@@ -1,0 +1,72 @@
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: docker/fastapi/Dockerfile
+    environment:
+      - MODEL_DIR=/app/models
+      - DATA_DIR=/app/data
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./models:/app/models:ro
+      - ./mlruns:/app/mlruns:ro
+    expose:
+      - "8000"
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - frontend-network
+      - backend-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.prod
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/mlens.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+    networks:
+      - frontend-network
+      - backend-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.11.1
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri /mlruns
+      --default-artifact-root /mlruns
+      --allowed-hosts "*"
+    volumes:
+      - ./mlruns:/mlruns
+    expose:
+      - "5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - backend-network
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
