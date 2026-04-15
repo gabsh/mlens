@@ -99,20 +99,3 @@ mlens/
 └── docker-compose.prod.yml
 ```
 
----
-
-## Deployment
-
-On every push to `main`, GitHub Actions SSHs into the VPS and runs:
-
-```bash
-git pull
-docker compose -f docker-compose.prod.yml up --build -d --remove-orphans
-```
-
-To sync trained models to the VPS manually:
-
-```bash
-rsync -avz ./models/ ubuntu@<VPS_IP>:~/mlens/models/
-rsync -avz ./mlruns/ ubuntu@<VPS_IP>:~/mlruns/
-```
