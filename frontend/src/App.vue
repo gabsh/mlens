@@ -171,6 +171,7 @@ body {
 /* ── Shared panel layout ── */
 .panel {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--bg-panel);
@@ -179,7 +180,15 @@ body {
   padding: 20px 22px;
   overflow-y: auto;
   gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
 }
+.panel::-webkit-scrollbar { width: 3px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+.panel::-webkit-scrollbar-thumb:hover { background: #666; }
+
+.panel > * { flex-shrink: 0; }
 
 /* ── Terminal prompt ── */
 .prompt { font-size: 13px; color: var(--primary-dim); }

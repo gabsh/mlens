@@ -70,6 +70,15 @@
             <span class="detail-val">{{ selectedRun[m.key]?.toFixed(m.digits ?? 4) ?? '—' }}</span>
           </div>
         </div>
+
+        <template v-if="rocByName.has(selectedRun.name)">
+          <div class="prompt" style="margin-top: 20px">
+            mlens@imdb:~$ <span class="cmd">roc-curve -- {{ selectedRun.name }}</span>
+          </div>
+          <div class="roc-wrap">
+            <Line :data="selectedRocData" :options="rocChartOptions" />
+          </div>
+        </template>
       </template>
 
       <div v-else class="awaiting">// click a row to see details</div>
@@ -83,19 +92,22 @@
     <div v-else-if="!loading" class="awaiting">mlens@imdb:~$ <span>awaiting data...</span></div>
 
   </div>
+
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { ref, computed, onMounted } from 'vue'
+import { Bar, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
-  BarElement, Title, Tooltip, Legend,
+  BarElement, LineElement, PointElement,
+  Title, Tooltip, Legend,
 } from 'chart.js'
 import { useSpinner } from '../composables/useSpinner.js'
 import { useRuns } from '../composables/useRuns.js'
+import { getRoc } from '../api.js'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
 
 const METRICS = ['accuracy', 'f1', 'roc_auc', 'precision', 'recall', 'mcc']
 const ALL_METRICS = [
@@ -150,6 +162,76 @@ const chartData = computed(() => ({
     borderWidth: 0,
   })),
 }))
+
+// ROC curves — loaded once at mount, displayed per selected model
+const rocByName = ref(new Map())
+
+onMounted(async () => {
+  try {
+    const curves = await getRoc()
+    rocByName.value = new Map(curves.map(c => [c.name, c]))
+  } catch {
+    // roc_curves.json not yet generated — silently ignore
+  }
+})
+
+const selectedRocData = computed(() => {
+  if (!selectedRun.value) return { datasets: [] }
+  const curve = rocByName.value.get(selectedRun.value.name)
+  if (!curve) return { datasets: [] }
+  return {
+    datasets: [
+      {
+        label: 'random',
+        data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+        borderColor: '#bbb',
+        borderWidth: 1,
+        borderDash: [4, 4],
+        pointRadius: 0,
+        tension: 0,
+      },
+      {
+        label: `${curve.name}  AUC=${curve.auc}`,
+        data: curve.fpr.map((x, j) => ({ x, y: curve.tpr[j] })),
+        borderColor: '#f87171',
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0,
+      },
+    ],
+  }
+})
+
+const rocChartOptions = {
+  responsive: true,
+  maintainAspectRatio: true,
+  aspectRatio: 1,
+  parsing: false,
+  plugins: {
+    legend: { labels: { color: '#333', font: { family: 'Courier New', size: 10 }, boxWidth: 12 } },
+    tooltip: {
+      callbacks: {
+        label: ctx => `${ctx.dataset.label}  FPR=${ctx.parsed.x.toFixed(3)} TPR=${ctx.parsed.y.toFixed(3)}`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      type: 'linear',
+      min: 0, max: 1,
+      title: { display: true, text: 'False Positive Rate', color: '#333', font: { family: 'Courier New', size: 10 } },
+      ticks: { color: '#555', font: { family: 'Courier New', size: 9 } },
+      grid: { color: '#e5e5e5' },
+    },
+    y: {
+      type: 'linear',
+      min: 0, max: 1,
+      title: { display: true, text: 'True Positive Rate', color: '#333', font: { family: 'Courier New', size: 10 } },
+      ticks: { color: '#555', font: { family: 'Courier New', size: 9 } },
+      grid: { color: '#e5e5e5' },
+    },
+  },
+}
 
 const chartOptions = {
   responsive: true,
@@ -209,4 +291,14 @@ const chartOptions = {
 .detail-val { width: 55px; text-align: right; color: var(--primary-dim); }
 
 .chart-wrap { height: 200px; }
+
+.roc-wrap {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 12px;
+}
 </style>

@@ -49,9 +49,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.routers import explain, health, metrics, predict  # noqa: E402
+from app.routers import explain, health, metrics, predict, roc  # noqa: E402
 
 app.include_router(health.router)
 app.include_router(predict.router)
 app.include_router(explain.router)
 app.include_router(metrics.router)
+app.include_router(roc.router)

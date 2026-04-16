@@ -27,3 +27,5 @@ export const explain = (text, modelName, numFeatures = 10) =>
     method: 'POST',
     body: JSON.stringify({ text, model_name: modelName, num_features: numFeatures }),
   })
+
+export const getRoc = () => request('/roc')

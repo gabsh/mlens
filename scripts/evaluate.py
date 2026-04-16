@@ -5,14 +5,16 @@ Prints a comparison table sorted by ROC-AUC.
 Usage:
   python scripts/evaluate.py
 """
+import json
 import os
 import sys
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, roc_curve
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -33,10 +35,15 @@ def evaluate_model(artifact: dict, X_test_clean: list, y_test: list) -> dict:
     y_pred = classifier.predict(X)
     y_proba = classifier.predict_proba(X)[:, 1]
 
+    fpr, tpr, _ = roc_curve(y_test, y_proba)
+    idx = np.linspace(0, len(fpr) - 1, 150, dtype=int)
+
     return {
         "accuracy": float(accuracy_score(y_test, y_pred)),
         "f1": float(f1_score(y_test, y_pred)),
         "roc_auc": float(roc_auc_score(y_test, y_proba)),
+        "fpr": fpr[idx].tolist(),
+        "tpr": tpr[idx].tolist(),
     }
 
 
@@ -72,6 +79,14 @@ def main():
         print("-" * 57)
         for r in sorted(results, key=lambda x: x["roc_auc"], reverse=True):
             print(f"{r['model']:<25} {r['accuracy']:>10.4f} {r['f1']:>10.4f} {r['roc_auc']:>10.4f}")
+
+        roc_data = [
+            {"name": r["model"], "fpr": r["fpr"], "tpr": r["tpr"], "auc": round(r["roc_auc"], 4)}
+            for r in results
+        ]
+        roc_path = model_dir / "roc_curves.json"
+        roc_path.write_text(json.dumps(roc_data))
+        print(f"\nROC curves saved to {roc_path}")
 
 
 if __name__ == "__main__":
