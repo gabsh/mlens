@@ -22,6 +22,11 @@
           </div>
 
           <div class="section">
+            <div class="section-title">// usage</div>
+            <p>Head to the <span class="hl">Prediction</span> tab, select a model (e.g. <span class="hl">tfidf_lr</span>), paste any movie review, and hit <span class="hl">Predict</span>. The app returns a sentiment label with confidence score.</p>
+          </div>
+
+          <div class="section">
             <div class="section-title">// embeddings</div>
             <div class="tags">
               <span class="tag">TF-IDF</span>
@@ -219,7 +224,7 @@ p {
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 4px;
 }
 
