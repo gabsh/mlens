@@ -52,8 +52,8 @@ services:
       --allowed-hosts "*"
     volumes:
       - ./mlruns:/mlruns
-    expose:
-      - "5000"
+    ports:
+      - "127.0.0.1:5000:5000"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
