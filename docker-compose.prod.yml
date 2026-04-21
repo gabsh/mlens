@@ -1,6 +1,5 @@
 services:
 
-  # ─── FastAPI ──────────────────────────────────────────────────
   fastapi:
     container_name: mlens-fastapi
     build:
@@ -26,9 +25,7 @@ services:
     networks:
       - frontend-network
       - backend-network
-      - proxy-network
 
-  # ─── Frontend Vue (nginx) ─────────────────────────────────────
   frontend:
     container_name: mlens-frontend
     build:
@@ -37,16 +34,15 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/mlens.conf:ro
     expose:
-      - "80"
+      - "80"                      
     depends_on:
       - fastapi
     restart: unless-stopped
     networks:
       - frontend-network
       - backend-network
-      - proxy-network
+      - proxy-network             
 
-  # ─── MLflow ───────────────────────────────────────────────────
   mlflow:
     container_name: mlens-mlflow
     image: ghcr.io/mlflow/mlflow:v3.11.1
@@ -59,8 +55,8 @@ services:
       --allowed-hosts "*"
     volumes:
       - ./mlruns:/mlruns
-    expose:
-      - "5000"
+    ports:
+      - "127.0.0.1:5000:5000"    # gardé pour Termius port forwarding
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
@@ -77,4 +73,4 @@ networks:
   backend-network:
     driver: bridge
   proxy-network:
-    external: true
+    external: true               
