@@ -1,5 +1,8 @@
 services:
+
+  # ─── FastAPI ──────────────────────────────────────────────────
   fastapi:
+    container_name: mlens-fastapi
     build:
       context: .
       dockerfile: app/Dockerfile
@@ -11,8 +14,6 @@ services:
     volumes:
       - ./models:/app/models:ro
       - ./mlruns:/app/mlruns:ro
-    expose:
-      - "8000"
     depends_on:
       mlflow:
         condition: service_healthy
@@ -25,23 +26,29 @@ services:
     networks:
       - frontend-network
       - backend-network
+      - proxy-network
 
+  # ─── Frontend Vue (nginx) ─────────────────────────────────────
   frontend:
+    container_name: mlens-frontend
     build:
       context: .
       dockerfile: frontend/Dockerfile.prod
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/mlens.conf:ro
-    ports:
-      - "8081:80"
+    expose:
+      - "80"
     depends_on:
       - fastapi
     restart: unless-stopped
     networks:
       - frontend-network
       - backend-network
+      - proxy-network
 
+  # ─── MLflow ───────────────────────────────────────────────────
   mlflow:
+    container_name: mlens-mlflow
     image: ghcr.io/mlflow/mlflow:v3.11.1
     command: >
       mlflow server
@@ -52,8 +59,8 @@ services:
       --allowed-hosts "*"
     volumes:
       - ./mlruns:/mlruns
-    ports:
-      - "127.0.0.1:5000:5000"
+    expose:
+      - "5000"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
@@ -69,3 +76,5 @@ networks:
     driver: bridge
   backend-network:
     driver: bridge
+  proxy-network:
+    external: true
