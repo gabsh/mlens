@@ -1,5 +1,8 @@
 services:
+
+  # ─── FastAPI ──────────────────────────────────────────────────
   fastapi:
+    container_name: mlens-fastapi
     build:
       context: .
       dockerfile: app/Dockerfile
@@ -12,30 +15,39 @@ services:
       - ./models:/app/models:ro
       - ./mlruns:/app/mlruns:ro
     ports:
-      - "8000:8000"
+      - "8000:8000"               
     depends_on:
       mlflow:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     networks:
       - frontend-network
       - backend-network
 
+  # ─── Vue.js Frontend ──────────────────────────────────────────
   frontend:
+    container_name: mlens-frontend
     build:
       context: .
       dockerfile: frontend/Dockerfile
     environment:
       - API_TARGET=http://fastapi:8000
     ports:
-      - "5173:5173"
+      - "5173:5173"               
     depends_on:
       - fastapi
     restart: unless-stopped
     networks:
       - frontend-network
 
+  # ─── MLflow ───────────────────────────────────────────────────
   mlflow:
+    container_name: mlens-mlflow
     image: ghcr.io/mlflow/mlflow:v3.11.1
     command: >
       mlflow server
@@ -47,7 +59,7 @@ services:
     volumes:
       - ./mlruns:/mlruns
     ports:
-      - "5000:5000"
+      - "5000:5000"               
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
