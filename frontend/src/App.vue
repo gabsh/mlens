@@ -208,6 +208,7 @@ body {
 .model-btn:hover, .action-btn:hover:not(:disabled) { border-color: #555; color: var(--primary); }
 .model-btn.active { border-color: var(--accent); color: var(--primary); background: #252525; }
 .action-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.model-btn:disabled { opacity: 0.3; cursor: default; }
 
 /* ── Shared status ── */
 .empty    { font-size: 13px; color: #444; }

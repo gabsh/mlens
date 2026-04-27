@@ -53,10 +53,10 @@
             <div class="section-title">// stack</div>
             <div class="stack-grid">
               <div class="stack-item"><span class="stack-key">embeddings</span><span class="stack-val">TF-IDF · Bag of Words</span></div>
-              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">scikit-learn · LightGBM · XGBoost</span></div>
+              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">LR · SVM · Naive Bayes · LightGBM · XGBoost</span></div>
               <div class="stack-item"><span class="stack-key">tracking  </span><span class="stack-val">MLflow</span></div>
               <div class="stack-item"><span class="stack-key">explainability</span><span class="stack-val">LIME</span></div>
-              <div class="stack-item"><span class="stack-key">backend   </span><span class="stack-val">FastAPI (Python 3.11)</span></div>
+              <div class="stack-item"><span class="stack-key">backend   </span><span class="stack-val">FastAPI · scikit-learn (Python 3.11)</span></div>
               <div class="stack-item"><span class="stack-key">frontend  </span><span class="stack-val">Vue 3 + Vite · nginx</span></div>
               <div class="stack-item"><span class="stack-key">infra     </span><span class="stack-val">Docker</span></div>
               <div class="stack-item"><span class="stack-key">github    </span><span class="stack-val"><a class="gh-link" href="https://github.com/gabsh/mlens" target="_blank" rel="noopener">github.com/gabsh/mlens</a></span></div>

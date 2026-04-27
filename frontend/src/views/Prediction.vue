@@ -1,7 +1,22 @@
 <template>
   <div class="panel">
 
-    <div class="prompt">mlens@imdb:~$ <span class="cmd">--model</span></div>
+    <div class="prompt">mlens@imdb:~$ <span class="cmd">review</span></div>
+    <div class="input-row">
+      <span class="caret">&gt;</span>
+      <textarea
+        ref="textareaEl"
+        class="textarea"
+        v-model="text"
+        placeholder="type a movie review..."
+        :disabled="loading || explainLoading"
+        @keydown.enter.exact.prevent="handleSubmit"
+        @input="autoResize"
+        rows="3"
+      />
+    </div>
+
+    <div class="prompt" style="margin-top: 20px">mlens@imdb:~$ <span class="cmd">--model</span></div>
     <div class="model-groups">
       <div v-for="(groupModels, group) in modelGroups" :key="group" class="model-group">
         <span class="group-label">{{ group }}</span>
@@ -9,25 +24,11 @@
           <button
             v-for="m in groupModels" :key="m"
             :class="['model-btn', selectedModel === m && 'active']"
-            @click="selectedModel = m"
+            :disabled="!hasText || loading || explainLoading"
+            @click="selectAndPredict(m)"
           >{{ m.split('_').slice(1).join('_') }}</button>
         </div>
       </div>
-    </div>
-
-    <div class="prompt" style="margin-top: 20px">mlens@imdb:~$ <span class="cmd">query</span></div>
-    <div class="input-row">
-      <span class="caret">&gt;</span>
-      <textarea
-        ref="textareaEl"
-        class="textarea"
-        v-model="text"
-        placeholder="type a movie review and press Enter to predict..."
-        :disabled="loading || explainLoading"
-        @keydown.enter.exact.prevent="handleSubmit"
-        @input="autoResize"
-        rows="3"
-      />
     </div>
 
     <div v-if="loading || explainLoading" class="loading-status">
@@ -37,7 +38,7 @@
       <span v-if="explainLoading">explaining</span>
     </div>
 
-    <div class="hint">mlens@imdb:~$ press Enter to predict · Shift+Enter for new line</div>
+    <div class="hint">mlens@imdb:~$ Shift+Enter for new line · click a model to predict</div>
 
   </div>
 
@@ -102,7 +103,8 @@ const explanation = ref(null)
 const explainError = ref(null)
 const explainLoading = ref(false)
 
-const canSubmit = computed(() => text.value.trim().length > 0 && selectedModel.value)
+const hasText = computed(() => text.value.trim().length > 0)
+const canSubmit = computed(() => hasText.value && selectedModel.value)
 const sortedExplanation = computed(() =>
   explanation.value ? [...explanation.value].sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])) : []
 )
@@ -110,7 +112,6 @@ const maxWeight = computed(() =>
   sortedExplanation.value.length ? Math.max(...sortedExplanation.value.map(([, w]) => Math.abs(w)), 0.001) : 1
 )
 
-// Group models by embedding prefix (tfidf, bow, glove)
 const modelGroups = computed(() => {
   const groups = {}
   for (const m of props.models) {
@@ -128,13 +129,16 @@ function autoResize() {
   el.style.height = el.scrollHeight + 'px'
 }
 
-// Reset size when text is cleared after submit
 watch(text, val => { if (!val) nextTick(autoResize) })
 
-// Handles async arrival of models list after mount
-watch(() => props.models, val => { if (val.length && !selectedModel.value) selectedModel.value = val[0] }, { immediate: true })
-
 const { spinnerChar } = useSpinner()
+
+function selectAndPredict(model) {
+  if (!hasText.value || loading.value) return
+  if (model === selectedModel.value) return
+  selectedModel.value = model
+  handleSubmit()
+}
 
 async function handleSubmit() {
   if (!canSubmit.value || loading.value) return
@@ -160,7 +164,6 @@ async function handleSubmit() {
 
 <style scoped>
 .model-groups { display: flex; flex-direction: column; gap: 10px; }
-
 .model-group { display: flex; align-items: center; gap: 10px; }
 
 .group-label {

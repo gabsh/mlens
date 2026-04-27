@@ -4,10 +4,10 @@
     <div class="prompt">mlens@imdb:~$ <span class="cmd">mlflow runs --experiment imdb</span></div>
     <div class="toolbar">
       <button
-        v-for="m in SORT_OPTS" :key="m"
-        :class="['model-btn', sortBy === m && 'active']"
-        @click="sortBy = m"
-      >{{ m }}</button>
+        v-for="m in SORT_OPTS" :key="m.key"
+        :class="['model-btn', sortBy === m.key && 'active']"
+        @click="sortBy = m.key"
+      >{{ m.label }}</button>
       <button class="action-btn" @click="loadRuns()" :disabled="loading" style="margin-left:auto">
         <span v-if="loading" class="spinner">{{ spinnerChar }}</span>
         <span v-else>[ refresh ]</span>
@@ -20,8 +20,8 @@
       <div class="run-header">
         <span class="c-rank">#</span>
         <span class="c-name">run</span>
-        <span class="c-score">{{ sortBy }}</span>
-        <span class="c-hw">time(s)</span>
+        <span class="c-score">{{ SORT_OPTS.find(m => m.key === sortBy)?.label }}</span>
+        <span class="c-train">train(s)</span>
         <span class="c-hw">inf(ms)</span>
         <span class="c-hw">cpu</span>
         <span class="c-hw">ram</span>
@@ -34,10 +34,11 @@
         <span class="c-rank muted">{{ i + 1 }}</span>
         <span class="c-name">{{ run.name }}</span>
         <span class="c-score" :class="i === 0 && 'best'">{{ run[sortBy]?.toFixed(3) ?? '—' }}</span>
-        <span class="c-hw muted">{{ run.train_duration_sec ?? '—' }}</span>
+        <span class="c-train muted">{{ run.train_duration_sec ?? '—' }}</span>
         <span class="c-hw muted">{{ run.inference_ms ?? '—' }}</span>
         <span class="c-hw muted">{{ run.cpu_percent != null ? run.cpu_percent + '%' : '—' }}</span>
         <span class="c-hw muted">{{ run.ram_used_gb != null ? run.ram_used_gb + ' GB' : '—' }}</span>
+        <span class="c-arrow">›</span>
       </div>
     </template>
 
@@ -83,7 +84,12 @@ import { ref, computed } from 'vue'
 import { useSpinner } from '../composables/useSpinner.js'
 import { useRuns } from '../composables/useRuns.js'
 
-const SORT_OPTS   = ['train_duration_sec', 'inference_ms', 'cpu_percent', 'ram_used_gb']
+const SORT_OPTS = [
+  { key: 'train_duration_sec', label: 'train(s)' },
+  { key: 'inference_ms',       label: 'inf(ms)'  },
+  { key: 'cpu_percent',        label: 'cpu'       },
+  { key: 'ram_used_gb',        label: 'ram'       },
+]
 const PERF_METRICS = [
   { key: 'accuracy',  label: 'accuracy'  },
   { key: 'f1',        label: 'f1'        },
@@ -117,22 +123,26 @@ const hwRows = computed(() => {
 .toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
 .run-header {
-  display: flex; gap: 6px;
+  display: flex; gap: 12px;
   font-size: 10px; color: #444; letter-spacing: 1.2px; text-transform: uppercase;
   border-bottom: 1px solid var(--border); padding-bottom: 4px;
 }
 .run-row {
-  display: flex; gap: 6px;
+  display: flex; gap: 12px;
   font-size: 13px; padding: 5px 4px;
   border-bottom: 1px solid #242424;
   cursor: pointer; transition: background 0.1s;
 }
 .run-row:hover { background: #242424; }
 .run-row--selected { background: #262626; border-left: 2px solid var(--accent); padding-left: 2px; }
+.c-arrow { width: 12px; text-align: right; color: #333; transition: color 0.1s; }
+.run-row:hover .c-arrow { color: #666; }
+.run-row--selected .c-arrow { color: var(--accent); }
 .c-rank { width: 20px; }
 .c-name { flex: 1; }
-.c-score { width: 68px; text-align: right; }
-.c-hw { width: 58px; text-align: right; }
+.c-score { width: 72px; text-align: right; }
+.c-train { width: 80px; text-align: right; }
+.c-hw { width: 68px; text-align: right; }
 .muted { color: #555; }
 .best { color: var(--accent); }
 

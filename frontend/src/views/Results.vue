@@ -30,6 +30,7 @@
         <span class="col-rank">{{ i + 1 }}</span>
         <span class="col-name">{{ run.name }}</span>
         <span class="col-val" :class="i === 0 && 'best'">{{ run[metric]?.toFixed(4) ?? '—' }}</span>
+        <span class="col-arrow">›</span>
       </div>
     </template>
 
@@ -269,7 +270,10 @@ const chartOptions = {
   cursor: pointer; transition: background 0.1s;
 }
 .rank-row:hover { background: #242424; }
-.rank-row--selected { background: #252525; }
+.rank-row--selected { background: #252525; border-left: 2px solid var(--accent); padding-left: 2px; }
+.col-arrow { width: 12px; text-align: right; color: #333; transition: color 0.1s; }
+.rank-row:hover .col-arrow { color: #666; }
+.rank-row--selected .col-arrow { color: var(--accent); }
 .col-rank { width: 20px; color: #444; }
 .col-name { flex: 1; }
 .col-val { width: 70px; text-align: right; color: var(--primary-dim); }
