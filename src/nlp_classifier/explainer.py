@@ -35,7 +35,6 @@ class TextExplainer:
         classifier = artifact["classifier"]
 
         def predict_fn(texts: list[str]) -> np.ndarray:
-            """Callable for LIME: perturbed texts → probability array (N, 2)."""
             cleaned = [clean_text(t) for t in texts]
             X = embedder.transform(cleaned)
             if hasattr(X, "toarray") and not classifier.supports_sparse:
@@ -50,6 +49,6 @@ class TextExplainer:
         )
 
         return {
-            "explanation": exp.as_list(),  # [(word, weight), ...]
+            "explanation": exp.as_list(),
             "model_name": model_name,
         }

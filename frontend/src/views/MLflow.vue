@@ -25,6 +25,7 @@
         <span class="c-hw">inf(ms)</span>
         <span class="c-hw">cpu</span>
         <span class="c-hw">ram</span>
+        <span></span>
       </div>
       <div
         v-for="(run, i) in sortedRuns" :key="run.name"
@@ -85,10 +86,10 @@ import { useSpinner } from '../composables/useSpinner.js'
 import { useRuns } from '../composables/useRuns.js'
 
 const SORT_OPTS = [
-  { key: 'train_duration_sec', label: 'train(s)' },
-  { key: 'inference_ms',       label: 'inf(ms)'  },
-  { key: 'cpu_percent',        label: 'cpu'       },
-  { key: 'ram_used_gb',        label: 'ram'       },
+  { key: 'train_duration_sec',   label: 'train(s)' },
+  { key: 'inference_ms',         label: 'inf(ms)'  },
+  { key: 'cpu_percent',          label: 'cpu'       },
+  { key: 'ram_used_gb',          label: 'ram'       },
 ]
 const PERF_METRICS = [
   { key: 'accuracy',  label: 'accuracy'  },
@@ -122,27 +123,31 @@ const hwRows = computed(() => {
 <style scoped>
 .toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
+.run-header,
+.run-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 72px 72px 72px 52px 80px 12px;
+  align-items: center;
+  gap: 8px;
+}
 .run-header {
-  display: flex; gap: 12px;
   font-size: 10px; color: #444; letter-spacing: 1.2px; text-transform: uppercase;
   border-bottom: 1px solid var(--border); padding-bottom: 4px;
 }
 .run-row {
-  display: flex; gap: 12px;
   font-size: 13px; padding: 5px 4px;
   border-bottom: 1px solid #242424;
   cursor: pointer; transition: background 0.1s;
 }
 .run-row:hover { background: #242424; }
 .run-row--selected { background: #262626; border-left: 2px solid var(--accent); padding-left: 2px; }
-.c-arrow { width: 12px; text-align: right; color: #333; transition: color 0.1s; }
+.c-arrow { text-align: right; color: #333; transition: color 0.1s; }
 .run-row:hover .c-arrow { color: #666; }
 .run-row--selected .c-arrow { color: var(--accent); }
-.c-rank { width: 20px; }
-.c-name { flex: 1; }
-.c-score { width: 72px; text-align: right; }
-.c-train { width: 80px; text-align: right; }
-.c-hw { width: 68px; text-align: right; }
+.c-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-score { text-align: right; }
+.c-train { text-align: right; }
+.c-hw { text-align: right; }
 .muted { color: #555; }
 .best { color: var(--accent); }
 

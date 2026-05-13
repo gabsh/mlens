@@ -16,16 +16,6 @@
         <button :class="['nav-btn', view === 'mlflow'     && 'active']" @click="view = 'mlflow'">mlflow</button>
       </nav>
 
-      <div class="status-group">
-        <span class="title-sub">
-          <span :class="['dot', apiStatus]" />
-          {{ apiStatus === 'ok' ? 'api online' : 'api offline' }}
-        </span>
-        <span class="title-sub">
-          <span :class="['dot', mlflowStatus]" />
-          {{ mlflowStatus === 'ok' ? 'mlflow online' : 'mlflow offline' }}
-        </span>
-      </div>
     </div>
 
     <WelcomeModal />
@@ -41,7 +31,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getHealth, getMlflowHealth } from './api.js'
+import { getHealth } from './api.js'
 import PredictionView from './views/Prediction.vue'
 import ResultsView    from './views/Results.vue'
 import MLflowView     from './views/MLflow.vue'
@@ -49,25 +39,12 @@ import WelcomeModal   from './views/WelcomeModal.vue'
 
 const view = ref('prediction')
 const models = ref([])
-const apiStatus = ref('loading')
-const mlflowStatus = ref('loading')
 
 onMounted(async () => {
-  const [apiResult, mlflowResult] = await Promise.allSettled([
-    getHealth(),
-    getMlflowHealth(),
-  ])
-
-  if (apiResult.status === 'fulfilled') {
-    models.value = apiResult.value.models_loaded
-    apiStatus.value = 'ok'
-  } else {
-    apiStatus.value = 'error'
-  }
-
-  mlflowStatus.value = mlflowResult.status === 'fulfilled'
-    ? mlflowResult.value.status
-    : 'error'
+  try {
+    const result = await getHealth()
+    models.value = result.models_loaded
+  } catch {}
 })
 </script>
 
@@ -139,25 +116,6 @@ body {
 .nav-btn:hover { color: var(--primary); }
 .nav-btn.active { color: var(--primary); border-bottom-color: var(--accent); }
 
-.status-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-}
-
-.title-sub {
-  font-size: 12px;
-  color: var(--primary-dim);
-  letter-spacing: 0.1em;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #444; display: inline-block; }
-.dot.ok { background: var(--positive); }
-.dot.error { background: var(--negative); }
 
 /* ── Panels ── */
 .panels {
