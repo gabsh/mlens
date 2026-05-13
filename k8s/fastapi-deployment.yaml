@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi
+  namespace: mlens
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+        - name: fastapi
+          image: gabinn/mlens-fastapi:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_DIR
+              value: /app/models
+            - name: DATA_DIR
+              value: /app/data
+            - name: MLRUNS_DIR
+              value: /app/mlruns
+            - name: LOG_LEVEL
+              value: INFO
+          volumeMounts:
+            - name: models
+              mountPath: /app/models
+              readOnly: true
+            - name: mlruns
+              mountPath: /app/mlruns
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
+      volumes:
+        - name: models
+          hostPath:
+            path: /home/ubuntu/mlens/models
+            type: Directory
+        - name: mlruns
+          hostPath:
+            path: /home/ubuntu/mlens/mlruns
+            type: Directory
