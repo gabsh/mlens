@@ -1,6 +1,6 @@
 services:
 
-  # ─── FastAPI ──────────────────────────────────────────────────
+  # ─── FastAPI ─────────────────────────────────────────────────
   fastapi:
     container_name: mlens-fastapi
     build:
