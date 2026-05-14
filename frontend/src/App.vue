@@ -84,7 +84,7 @@ body {
 .titlebar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 6px 16px;
   background: #252525;
   border-bottom: 1px solid var(--border);

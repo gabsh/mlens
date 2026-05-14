@@ -57,3 +57,4 @@ jobs:
             sudo kubectl apply -f k8s/
             sudo kubectl rollout restart deployment/fastapi -n mlens
             sudo kubectl rollout restart deployment/frontend -n mlens
+            sudo k3s crictl rmi --prune
