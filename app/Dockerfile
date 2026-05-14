@@ -1,16 +1,13 @@
 FROM python:3.11-slim
 WORKDIR /app
 
+COPY requirements.prod.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libgomp1 \
+    build-essential libgomp1 \
+    && pip install --no-cache-dir -r requirements.prod.txt \
+    && apt-get purge -y build-essential \
+    && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir torch==2.10.0+cpu \
-    --index-url https://download.pytorch.org/whl/cpu
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 RUN python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
 COPY . .
 ENV PYTHONPATH=/app
