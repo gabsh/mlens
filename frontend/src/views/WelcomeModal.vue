@@ -41,7 +41,7 @@
             <div class="tags">
               <span class="tag">Logistic Regression</span>
               <span class="tag">SVM</span>
-              <span class="tag">Random Forest</span>
+              <span class="tag coming">Random Forest <em>disabled (RAM)</em></span>
               <span class="tag">LightGBM</span>
               <span class="tag">XGBoost</span>
               <span class="tag">Naive Bayes</span>
@@ -53,7 +53,7 @@
             <div class="section-title">// stack</div>
             <div class="stack-grid">
               <div class="stack-item"><span class="stack-key">embeddings</span><span class="stack-val">TF-IDF · BoW · GloVe · BERT</span></div>
-              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">LR · SVM · RF · LightGBM · XGBoost · NB · MLP</span></div>
+              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">LR · SVM · LightGBM · XGBoost · NB · MLP</span></div>
               <div class="stack-item"><span class="stack-key">tracking  </span><span class="stack-val">MLflow (dev only)</span></div>
               <div class="stack-item"><span class="stack-key">explainability</span><span class="stack-val">LIME</span></div>
               <div class="stack-item"><span class="stack-key">backend   </span><span class="stack-val">FastAPI · scikit-learn (Python 3.11)</span></div>
