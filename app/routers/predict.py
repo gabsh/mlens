@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("/predict/", response_model=PredictResponse)
-@limiter.limit("40/minute")
+@limiter.limit("20/minute")
 async def predict(request: Request, body: PredictRequest):
     registry = request.app.state.registry
 
