@@ -1,8 +1,11 @@
+import logging
+
 from fastapi import APIRouter, HTTPException, Request
 
 from app.schemas import PredictRequest, PredictResponse
 
-router = APIRouter(tags=["prediction"])
+logger = logging.getLogger(__name__)
+router = APIRouter()
 
 
 @router.post("/predict/", response_model=PredictResponse)
@@ -18,6 +21,7 @@ async def predict(request: Request, body: PredictRequest):
     try:
         result = registry.predict(body.model_name, body.text)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error("Predict error: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
     return PredictResponse(**result, model_name=body.model_name)

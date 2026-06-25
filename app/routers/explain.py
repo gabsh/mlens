@@ -1,11 +1,16 @@
+import logging
+
 from fastapi import APIRouter, HTTPException, Request
 
+from app.main import limiter
 from app.schemas import ExplainRequest, ExplainResponse
 
-router = APIRouter(tags=["explanation"])
+logger = logging.getLogger(__name__)
+router = APIRouter()
 
 
 @router.post("/explain/", response_model=ExplainResponse)
+@limiter.limit("10/minute")
 async def explain(request: Request, body: ExplainRequest):
     registry = request.app.state.registry
     explainer = request.app.state.explainer
@@ -27,6 +32,7 @@ async def explain(request: Request, body: ExplainRequest):
         # BERT not supported for LIME
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error("Explain error: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
     return ExplainResponse(**result)

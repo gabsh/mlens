@@ -1,10 +1,13 @@
+import logging
 import math
 import os
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 
-router = APIRouter(tags=["metrics"])
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
 
 MLRUNS_DIR = Path(os.getenv("MLRUNS_DIR", "/app/mlruns"))
 _EXPERIMENT_NAME = "imdb_binary_classifier"
@@ -78,4 +81,5 @@ async def get_metrics():
             })
         return results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error("Metrics error: %s", e)
+        raise HTTPException(status_code=500, detail="Internal server error")

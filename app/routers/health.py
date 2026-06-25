@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from app.routers.metrics import MLRUNS_DIR
 from app.schemas import HealthResponse
 
-router = APIRouter(tags=["health"])
+router = APIRouter()
 
 
 @router.get("/health", response_model=HealthResponse)
