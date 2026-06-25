@@ -44,6 +44,11 @@
 
   <div class="panel">
 
+    <div v-if="rateLimited" class="rate-limit">
+      <span class="rate-limit-code">429</span>
+      <span class="rate-limit-msg">too many requests — slow down</span>
+    </div>
+
     <div v-if="predictError" class="error">{{ predictError }}</div>
 
     <template v-if="prediction">
@@ -102,6 +107,7 @@ const predictError = ref(null)
 const explanation = ref(null)
 const explainError = ref(null)
 const explainLoading = ref(false)
+const rateLimited = ref(false)
 
 const hasText = computed(() => text.value.trim().length > 0)
 const canSubmit = computed(() => hasText.value && selectedModel.value)
@@ -148,11 +154,15 @@ async function handleSubmit() {
   explanation.value = null
   predictError.value = null
   explainError.value = null
+  rateLimited.value = false
 
   await Promise.all([
     predict(text.value, selectedModel.value)
       .then(r => { prediction.value = r })
-      .catch(e => { predictError.value = e.message })
+      .catch(e => {
+        if (e.message === '__RATE_LIMIT__') rateLimited.value = true
+        else predictError.value = e.message
+      })
       .finally(() => { loading.value = false }),
     explain(text.value, selectedModel.value)
       .then(r => { explanation.value = r.explanation })
@@ -230,4 +240,8 @@ async function handleSubmit() {
 .lime-val { width: 55px; text-align: right; font-size: 12px; }
 .lime-val.pos { color: var(--positive); }
 .lime-val.neg { color: var(--negative); }
+
+.rate-limit { display: flex; flex-direction: column; gap: 6px; }
+.rate-limit-code { font-size: 48px; font-weight: 700; color: var(--negative); letter-spacing: 4px; }
+.rate-limit-msg { font-size: 13px; color: var(--primary-dim); letter-spacing: 0.08em; text-transform: uppercase; }
 </style>

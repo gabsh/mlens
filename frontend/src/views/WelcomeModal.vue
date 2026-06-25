@@ -49,20 +49,6 @@
             </div>
           </div>
 
-          <div class="section">
-            <div class="section-title">// stack</div>
-            <div class="stack-grid">
-              <div class="stack-item"><span class="stack-key">embeddings</span><span class="stack-val">TF-IDF · BoW · GloVe · BERT</span></div>
-              <div class="stack-item"><span class="stack-key">classifiers</span><span class="stack-val">LR · SVM · LightGBM · XGBoost · NB · MLP</span></div>
-              <div class="stack-item"><span class="stack-key">tracking  </span><span class="stack-val">MLflow (dev only)</span></div>
-              <div class="stack-item"><span class="stack-key">explainability</span><span class="stack-val">LIME</span></div>
-              <div class="stack-item"><span class="stack-key">backend   </span><span class="stack-val">FastAPI · scikit-learn (Python 3.11)</span></div>
-              <div class="stack-item"><span class="stack-key">frontend  </span><span class="stack-val">Vue 3 + Vite · nginx</span></div>
-              <div class="stack-item"><span class="stack-key">orchestration</span><span class="stack-val">Kubernetes · k3s</span></div>
-              <div class="stack-item"><span class="stack-key">ci/cd     </span><span class="stack-val">GitHub Actions</span></div>
-              <div class="stack-item"><span class="stack-key">github    </span><span class="stack-val"><a class="gh-link" href="https://github.com/gabsh/mlens" target="_blank" rel="noopener">github.com/gabsh/mlens</a></span></div>
-            </div>
-          </div>
 
           <div class="footer">
             <button class="enter-btn" @click="close">
@@ -193,34 +179,6 @@ p {
 }
 .tag.coming em { font-style: normal; font-size: 10px; margin-left: 4px; }
 
-.stack-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px 24px;
-}
-
-.stack-item {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-}
-
-.stack-key {
-  color: var(--primary);
-  opacity: 0.6;
-  white-space: pre;
-  min-width: 80px;
-}
-
-.stack-val { color: var(--primary); opacity: 1; }
-
-.gh-link {
-  color: var(--primary);
-  opacity: 0.85;
-  text-decoration: none;
-  border-bottom: 1px solid var(--primary-dim);
-}
-.gh-link:hover { opacity: 1; }
 
 .footer {
   display: flex;

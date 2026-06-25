@@ -2,6 +2,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Request
 
+from app.main import limiter
 from app.schemas import PredictRequest, PredictResponse
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,7 @@ router = APIRouter()
 
 
 @router.post("/predict/", response_model=PredictResponse)
+@limiter.limit("40/minute")
 async def predict(request: Request, body: PredictRequest):
     registry = request.app.state.registry
 

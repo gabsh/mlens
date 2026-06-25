@@ -4,6 +4,7 @@ async function request(path, options = {}) {
     ...options,
   })
   if (!res.ok) {
+    if (res.status === 429) throw new Error('__RATE_LIMIT__')
     const err = await res.json().catch(() => ({ detail: res.statusText }))
     throw new Error(err.detail || `HTTP ${res.status}`)
   }

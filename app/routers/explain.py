@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("/explain/", response_model=ExplainResponse)
-@limiter.limit("10/minute")
+@limiter.limit("40/minute")
 async def explain(request: Request, body: ExplainRequest):
     registry = request.app.state.registry
     explainer = request.app.state.explainer
