@@ -31,15 +31,6 @@
       </div>
     </div>
 
-    <div v-if="loading || explainLoading" class="loading-status">
-      <span class="spinner">{{ spinnerChar }}</span>
-      <span v-if="loading">predicting</span>
-      <span v-if="loading && explainLoading"> · </span>
-      <span v-if="explainLoading">explaining</span>
-    </div>
-
-    <div class="hint">mlens@imdb:~$ Shift+Enter for new line · click a model to predict</div>
-
     <div class="prompt" style="margin-top: 16px">mlens@imdb:~$ <span class="cmd">--examples</span></div>
     <div class="examples">
       <div class="example" @click="useExample('pos')">
@@ -51,6 +42,15 @@
         <span class="ex-text">A complete waste of time. Predictable plot, wooden acting, and a painfully slow pace that dragged on for what felt like hours. I wanted to leave after twenty minutes.</span>
       </div>
     </div>
+
+    <div v-if="loading || explainLoading" class="loading-status">
+      <span class="spinner">{{ spinnerChar }}</span>
+      <span v-if="loading">predicting</span>
+      <span v-if="loading && explainLoading"> · </span>
+      <span v-if="explainLoading">explaining</span>
+    </div>
+
+    <div class="hint">mlens@imdb:~$ Shift+Enter for new line · click a model to predict</div>
 
   </div>
 
