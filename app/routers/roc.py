@@ -13,6 +13,6 @@ async def get_roc_curves():
     if not path.exists():
         raise HTTPException(
             status_code=404,
-            detail="roc_curves.json not found — run: python run.py evaluate",
+            detail="roc_curves.json not found — run: python run.py train",
         )
     return json.loads(path.read_text())

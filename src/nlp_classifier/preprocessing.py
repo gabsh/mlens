@@ -1,7 +1,3 @@
-"""
-Text normalization pipeline used by all non-BERT embeddings.
-BERT embedders bypass this and receive raw text directly.
-"""
 import re
 
 import nltk
@@ -9,7 +5,6 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 nltk.download("stopwords", quiet=True)
-nltk.download("punkt", quiet=True)
 
 _STOP_WORDS = set(stopwords.words("english"))
 _STEMMER = PorterStemmer()

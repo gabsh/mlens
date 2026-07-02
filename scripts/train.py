@@ -190,7 +190,7 @@ def main():
     )
     parser.add_argument(
         "--max-train-samples", type=int, default=None,
-        help="Subsample training set (useful for BERT speed testing)",
+        help="Subsample training set for faster iteration",
     )
     args = parser.parse_args()
 

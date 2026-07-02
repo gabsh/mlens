@@ -29,7 +29,6 @@ async def explain(request: Request, body: ExplainRequest):
             num_features=body.num_features,
         )
     except ValueError as e:
-        # BERT not supported for LIME
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
         logger.error("Explain error: %s", e)

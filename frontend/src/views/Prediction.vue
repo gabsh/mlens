@@ -40,6 +40,18 @@
 
     <div class="hint">mlens@imdb:~$ Shift+Enter for new line · click a model to predict</div>
 
+    <div class="prompt" style="margin-top: 16px">mlens@imdb:~$ <span class="cmd">--examples</span></div>
+    <div class="examples">
+      <div class="example" @click="useExample('pos')">
+        <span class="ex-tag pos">POS</span>
+        <span class="ex-text">An absolute masterpiece. The performances are breathtaking and the story kept me riveted from start to finish. One of the best films I have seen in years.</span>
+      </div>
+      <div class="example" @click="useExample('neg')">
+        <span class="ex-tag neg">NEG</span>
+        <span class="ex-text">A complete waste of time. Predictable plot, wooden acting, and a painfully slow pace that dragged on for what felt like hours. I wanted to leave after twenty minutes.</span>
+      </div>
+    </div>
+
   </div>
 
   <div class="panel">
@@ -127,6 +139,16 @@ const modelGroups = computed(() => {
   }
   return groups
 })
+
+const EXAMPLES = {
+  pos: "An absolute masterpiece. The performances are breathtaking and the story kept me riveted from start to finish. One of the best films I have seen in years.",
+  neg: "A complete waste of time. Predictable plot, wooden acting, and a painfully slow pace that dragged on for what felt like hours. I wanted to leave after twenty minutes.",
+}
+
+function useExample(type) {
+  text.value = EXAMPLES[type]
+  nextTick(autoResize)
+}
 
 function autoResize() {
   const el = textareaEl.value
@@ -240,6 +262,23 @@ async function handleSubmit() {
 .lime-val { width: 55px; text-align: right; font-size: 12px; }
 .lime-val.pos { color: var(--positive); }
 .lime-val.neg { color: var(--negative); }
+
+.examples { display: flex; flex-direction: column; gap: 6px; }
+.example {
+  display: flex; gap: 8px; align-items: flex-start;
+  cursor: pointer; opacity: 0.45;
+  transition: opacity 0.15s;
+  font-size: 12px; line-height: 1.6;
+}
+.example:hover { opacity: 1; }
+.ex-tag {
+  flex-shrink: 0;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  padding-top: 2px;
+}
+.ex-tag.pos { color: var(--positive); }
+.ex-tag.neg { color: var(--negative); }
+.ex-text { color: var(--primary-dim); }
 
 .rate-limit { display: flex; flex-direction: column; gap: 6px; }
 .rate-limit-code { font-size: 48px; font-weight: 700; color: var(--negative); letter-spacing: 4px; }

@@ -31,7 +31,7 @@
             <div class="tags">
               <span class="tag">TF-IDF</span>
               <span class="tag">Bag of Words</span>
-              <span class="tag coming">GloVe <em>coming soon</em></span>
+              <span class="tag coming">GloVe <em>not deployed</em></span>
               <span class="tag coming">BERT <em>coming soon</em></span>
             </div>
           </div>
