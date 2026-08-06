@@ -23,7 +23,7 @@
 
           <div class="section">
             <div class="section-title">// usage</div>
-            <p>Head to the <span class="hl">Prediction</span> tab, select a model (e.g. <span class="hl">tfidf_lr</span>), paste any movie review, and hit <span class="hl">Predict</span>. The app returns a sentiment label with confidence score.</p>
+            <p>Head to the <span class="hl">Prediction</span> tab, type a movie review or click an example, then select a model. The app instantly returns a sentiment label with confidence score and a <span class="hl">LIME explanation</span> highlighting the words that drove the prediction.</p>
           </div>
 
           <div class="section">
