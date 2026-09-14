@@ -1,3 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: apex-redirect
+  namespace: mlens
+spec:
+  redirectRegex:
+    regex: ^https://mlens\.fr/(.*)
+    replacement: https://www.mlens.fr/${1}
+    permanent: true
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,7 +16,6 @@ metadata:
   namespace: mlens
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: traefik
   tls:
@@ -14,7 +24,7 @@ spec:
         - www.mlens.fr
       secretName: mlens-tls
   rules:
-    - host: mlens.fr
+    - host: www.mlens.fr
       http:
         paths:
           - path: /
@@ -24,7 +34,24 @@ spec:
                 name: frontend
                 port:
                   number: 80
-    - host: www.mlens.fr
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mlens-apex-redirect
+  namespace: mlens
+  annotations:
+    # Pas d'annotation cert-manager ici : le certificat (SAN mlens.fr + www.mlens.fr)
+    # est déjà émis par l'Ingress mlens-ingress et partagé via le même secretName.
+    traefik.ingress.kubernetes.io/router.middlewares: mlens-apex-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - mlens.fr
+      secretName: mlens-tls
+  rules:
+    - host: mlens.fr
       http:
         paths:
           - path: /
