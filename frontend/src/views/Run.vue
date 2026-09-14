@@ -1,7 +1,7 @@
 <template>
   <div class="panel">
 
-    <div class="prompt">mlens@imdb:~$ <span class="cmd">mlflow runs --experiment imdb</span></div>
+    <div class="prompt">mlens@imdb:~$ <span class="cmd">runs --experiment imdb</span></div>
     <div class="toolbar">
       <button
         v-for="m in SORT_OPTS" :key="m.key"

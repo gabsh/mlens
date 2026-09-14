@@ -13,7 +13,7 @@
       <nav class="nav">
         <button :class="['nav-btn', view === 'prediction' && 'active']" @click="view = 'prediction'">prediction</button>
         <button :class="['nav-btn', view === 'results'    && 'active']" @click="view = 'results'">results</button>
-        <button :class="['nav-btn', view === 'mlflow'     && 'active']" @click="view = 'mlflow'">mlflow</button>
+        <button :class="['nav-btn', view === 'run'         && 'active']" @click="view = 'run'">run</button>
       </nav>
 
     </div>
@@ -23,7 +23,7 @@
     <div class="panels">
       <PredictionView v-if="view === 'prediction'" :models="models" />
       <ResultsView    v-else-if="view === 'results'" />
-      <MLflowView     v-else />
+      <RunView        v-else />
     </div>
 
   </div>
@@ -34,7 +34,7 @@ import { ref, onMounted } from 'vue'
 import { getHealth } from './api.js'
 import PredictionView from './views/Prediction.vue'
 import ResultsView    from './views/Results.vue'
-import MLflowView     from './views/MLflow.vue'
+import RunView        from './views/Run.vue'
 import WelcomeModal   from './views/WelcomeModal.vue'
 
 const view = ref('prediction')
