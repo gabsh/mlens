@@ -35,6 +35,10 @@ async def lifespan(app: FastAPI):
     app.state.registry = ModelRegistry(model_dir=model_dir)
     app.state.explainer = TextExplainer()
     logger.info(f"Ready. Models loaded: {app.state.registry.available_models()}")
+
+    from app.prom_metrics import models_loaded
+    models_loaded.set(len(app.state.registry.available_models()))
+
     yield
     # --- SHUTDOWN ---
     logger.info("Shutting down.")
@@ -58,6 +62,10 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
+
+from prometheus_fastapi_instrumentator import Instrumentator  # noqa: E402
+
+Instrumentator().instrument(app).expose(app, endpoint="/metrics/prometheus", include_in_schema=False)
 
 from app.routers import explain, health, metrics, predict, roc  # noqa: E402
 

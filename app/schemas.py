@@ -6,7 +6,7 @@ class PredictRequest(BaseModel):
     model_name: str = Field(default="tfidf_lr")
 
 
-class PredictResponse(BaseModel):
+class PredictResponse(BaseModel):  
     label: str
     label_idx: int
     confidence: float

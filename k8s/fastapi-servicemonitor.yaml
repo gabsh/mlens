@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mlens-api
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  jobLabel: app
+  namespaceSelector:
+    matchNames:
+      - mlens
+  selector:
+    matchLabels:
+      app: mlens-api
+  endpoints:
+    - port: http
+      path: /metrics/prometheus
+      interval: 30s
