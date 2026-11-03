@@ -3,12 +3,9 @@ kind: Service
 metadata:
   name: fastapi
   namespace: mlens
-  labels:
-    app: mlens-api
 spec:
   selector:
     app: fastapi
   ports:
-    - name: http
-      port: 8000
+    - port: 8000
       targetPort: 8000

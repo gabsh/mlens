@@ -1,0 +1,113 @@
+{
+  "title": "mlens API",
+  "uid": "mlens-api",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Models loaded",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "mlens_models_loaded{job=\"mlens-api\"}", "legendFormat": "loaded" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "HTTP error rate (5m)",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{job=\"mlens-api\",status=~\"4xx|5xx\"}[5m])) / sum(rate(http_requests_total{job=\"mlens-api\"}[5m]))",
+          "legendFormat": "error ratio"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP requests/s by route",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{job=\"mlens-api\"}[5m])) by (handler, status)",
+          "legendFormat": "{{handler}} - {{status}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP p95 latency by route",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"mlens-api\"}[5m])) by (le, handler))",
+          "legendFormat": "{{handler}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Predictions/s by model",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlens_predictions_total{job=\"mlens-api\"}[5m])) by (model_name)",
+          "legendFormat": "{{model_name}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Predictions/s by predicted label",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlens_predictions_total{job=\"mlens-api\"}[5m])) by (label)",
+          "legendFormat": "{{label}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Prediction error rate by type",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlens_prediction_errors_total{job=\"mlens-api\"}[5m])) by (error_type)",
+          "legendFormat": "{{error_type}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "LIME explain duration (p50 / p95) by model",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(mlens_explain_duration_seconds_bucket{job=\"mlens-api\"}[5m])) by (le, model_name))",
+          "legendFormat": "p50 - {{model_name}}"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(mlens_explain_duration_seconds_bucket{job=\"mlens-api\"}[5m])) by (le, model_name))",
+          "legendFormat": "p95 - {{model_name}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Explain error rate by type",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "expr": "sum(rate(mlens_explain_errors_total{job=\"mlens-api\"}[5m])) by (error_type)",
+          "legendFormat": "{{error_type}}"
+        }
+      ]
+    }
+  ]
+}
